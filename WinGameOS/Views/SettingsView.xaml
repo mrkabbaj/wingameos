@@ -1,0 +1,272 @@
+<UserControl x:Class="WinGameOS.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="40,20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- ═══════════ HEADER ═══════════ -->
+            <TextBlock Grid.Row="0" Text="⚙️ Settings" FontSize="28" FontWeight="Bold"
+                       Foreground="{StaticResource TextBrush}" Margin="0,0,0,24"
+                       FontFamily="{StaticResource TitleFont}"/>
+
+            <!-- ═══════════ SETTINGS PANELS ═══════════ -->
+            <StackPanel Grid.Row="1">
+
+                <!-- ─── DISPLAY ─── -->
+                <Border Style="{StaticResource Card}" Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="🖥️ Display" FontSize="18" FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextBrush}" Margin="0,0,0,16"/>
+
+                        <Grid Margin="0,0,0,16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="160"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Resolution" FontSize="14"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       VerticalAlignment="Center"/>
+                            <ComboBox Grid.Column="1" Style="{StaticResource ConsoleComboBox}"
+                                      ItemsSource="{Binding DisplayModes}"
+                                      SelectedItem="{Binding SelectedDisplayMode}"
+                                      DisplayMemberPath="FullDescription"
+                                      MaxWidth="300" HorizontalAlignment="Left"/>
+                            <Button Grid.Column="2" Style="{StaticResource PrimaryButton}"
+                                    Content="Apply" Padding="16,8"
+                                    Command="{Binding ApplyDisplayModeCommand}"/>
+                        </Grid>
+
+                        <Border Background="#10FFFFFF" CornerRadius="8" Padding="12,8" Margin="0,0,0,16">
+                            <TextBlock FontSize="12" Foreground="{StaticResource TextMutedBrush}">
+                                <Run Text="Current: "/>
+                                <Run Text="{Binding CurrentDisplayMode.FullDescription, Mode=OneWay}"
+                                     Foreground="{StaticResource AccentSecondaryBrush}"/>
+                            </TextBlock>
+                        </Border>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="160"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="60"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="☀️ Brightness" FontSize="14"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       VerticalAlignment="Center"/>
+                            <Slider Grid.Column="1" Style="{StaticResource ConsoleSlider}"
+                                    Value="{Binding Brightness}" Minimum="0" Maximum="100"/>
+                            <TextBlock Grid.Column="2" Text="{Binding Brightness, StringFormat={}{0}%}"
+                                       FontSize="14" Foreground="{StaticResource TextBrush}"
+                                       FontFamily="{StaticResource MonoFont}"
+                                       HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- ─── AUDIO ─── -->
+                <Border Style="{StaticResource Card}" Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="🔊 Audio" FontSize="18" FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextBrush}" Margin="0,0,0,16"/>
+
+                        <Grid Margin="0,0,0,16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="160"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="60"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="🔊 Volume" FontSize="14"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       VerticalAlignment="Center"/>
+                            <Slider Grid.Column="1" Style="{StaticResource ConsoleSlider}"
+                                    Value="{Binding Volume}" Minimum="0" Maximum="100"/>
+                            <TextBlock Grid.Column="2" Text="{Binding Volume, StringFormat={}{0}%}"
+                                       FontSize="14" Foreground="{StaticResource TextBrush}"
+                                       FontFamily="{StaticResource MonoFont}"
+                                       HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <Button Grid.Column="3" Style="{StaticResource SecondaryButton}"
+                                    Padding="10,6" Margin="12,0,0,0"
+                                    Command="{Binding ToggleMuteCommand}">
+                                <TextBlock FontSize="16">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Text" Value="🔊"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsMuted}" Value="True">
+                                                    <Setter Property="Text" Value="🔇"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Button>
+                        </Grid>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="160"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Output Device" FontSize="14"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       VerticalAlignment="Center"/>
+                            <ComboBox Grid.Column="1" Style="{StaticResource ConsoleComboBox}"
+                                      ItemsSource="{Binding AudioDevices}"
+                                      SelectedItem="{Binding SelectedAudioDevice}"
+                                      DisplayMemberPath="Name"
+                                      MaxWidth="400" HorizontalAlignment="Left"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- ─── PERFORMANCE ─── -->
+                <Border Style="{StaticResource Card}" Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="⚡ Performance" FontSize="18" FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextBrush}" Margin="0,0,0,16"/>
+
+                        <Grid Margin="0,0,0,16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="160"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Power Mode" FontSize="14"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       VerticalAlignment="Center"/>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <RadioButton Content="🌿 Eco" GroupName="PerfMode" FontSize="13"
+                                             Foreground="{StaticResource TextBrush}"
+                                             Checked="PerfMode_Checked" Tag="Eco" Margin="0,0,8,0"/>
+                                <RadioButton Content="⚖️ Balanced" GroupName="PerfMode" FontSize="13"
+                                             Foreground="{StaticResource TextBrush}"
+                                             IsChecked="True"
+                                             Checked="PerfMode_Checked" Tag="Balanced" Margin="0,0,8,0"/>
+                                <RadioButton Content="🚀 Performance" GroupName="PerfMode" FontSize="13"
+                                             Foreground="{StaticResource TextBrush}"
+                                             Checked="PerfMode_Checked" Tag="Performance" Margin="0,0,8,0"/>
+                                <RadioButton Content="🔥 Turbo" GroupName="PerfMode" FontSize="13"
+                                             Foreground="{StaticResource TextBrush}"
+                                             Checked="PerfMode_Checked" Tag="Turbo"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Border Background="#10FFFFFF" CornerRadius="8" Padding="16,12">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="🔋 Battery" FontSize="14"
+                                               Foreground="{StaticResource TextSecondaryBrush}"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                        <TextBlock Text="{Binding BatteryPercent, StringFormat={}{0}%}"
+                                                   FontSize="24" FontWeight="Bold"
+                                                   Foreground="{StaticResource AccentGreenBrush}"/>
+                                        <TextBlock Text="{Binding BatteryTimeRemaining}" FontSize="13"
+                                                   Foreground="{StaticResource TextMutedBrush}"
+                                                   VerticalAlignment="Bottom" Margin="12,0,0,4"/>
+                                    </StackPanel>
+                                </StackPanel>
+                                <Button Grid.Column="1" Style="{StaticResource SecondaryButton}"
+                                        Content="🔄 Refresh" Command="{Binding RefreshBatteryCommand}"/>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <!-- ─── SYSTEM ─── -->
+                <Border Style="{StaticResource Card}" Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="🛠️ System" FontSize="18" FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextBrush}" Margin="0,0,0,16"/>
+
+                        <StackPanel>
+                            <Grid Margin="0,0,0,16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="Hide Taskbar in Game Mode" FontSize="14"
+                                               Foreground="{StaticResource TextBrush}"/>
+                                    <TextBlock Text="Hides Windows taskbar for immersive experience"
+                                               FontSize="11" Foreground="{StaticResource TextMutedBrush}"/>
+                                </StackPanel>
+                                <CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitch}"
+                                          IsChecked="{Binding HideTaskbar}"/>
+                            </Grid>
+
+                            <Grid Margin="0,0,0,16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="Suppress Notifications" FontSize="14"
+                                               Foreground="{StaticResource TextBrush}"/>
+                                    <TextBlock Text="Block distracting notifications during gaming"
+                                               FontSize="11" Foreground="{StaticResource TextMutedBrush}"/>
+                                </StackPanel>
+                                <CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitch}"
+                                          IsChecked="{Binding SuppressNotifications}"/>
+                            </Grid>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="Launch at Windows Startup" FontSize="14"
+                                               Foreground="{StaticResource TextBrush}"/>
+                                    <TextBlock Text="Start WinGameOS when Windows boots"
+                                               FontSize="11" Foreground="{StaticResource TextMutedBrush}"/>
+                                </StackPanel>
+                                <CheckBox Grid.Column="1" Style="{StaticResource ToggleSwitch}"
+                                          IsChecked="{Binding LaunchAtStartup}"/>
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,24,0,0">
+                            <Button Style="{StaticResource SecondaryButton}" Content="💤 Sleep"
+                                    Command="{Binding SleepCommand}" Margin="0,0,12,0"/>
+                            <Button Style="{StaticResource SecondaryButton}" Content="🔄 Restart"
+                                    Command="{Binding RestartCommand}" Margin="0,0,12,0"/>
+                            <Button Content="⏻ Shutdown" Command="{Binding ShutdownCommand}"
+                                    Padding="20,10" Cursor="Hand" FontSize="14" Foreground="White"
+                                    BorderThickness="0">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="bd" CornerRadius="10" Padding="{TemplateBinding Padding}"
+                                                Background="{StaticResource AccentRedBrush}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="bd" Property="Background" Value="#FF3030"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <Border Height="20"/>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</UserControl>
